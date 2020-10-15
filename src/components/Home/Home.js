@@ -77,8 +77,8 @@ class Home extends Component {
                     'style': (rowid, colid, data) => {
                         return { color: 'red' }
                     },
-                    'sort': true,
                     'filter': true,
+                    'sort': true,
                     'placeholder': "search by id",
                 },
                 name: {
@@ -121,7 +121,7 @@ class Home extends Component {
                                     }}
                                 />
                                 <Button label="Delete" icon="pi pi-trash" className="p-button-sm p-button-raised p-button-text" onClick={e => this.table.setState({
-                                    openDiaDel: true, id: data[rowid].id
+                                    openDiaDel: true, id: data[rowid].ids
                                 })} />
                             </div>
                         );

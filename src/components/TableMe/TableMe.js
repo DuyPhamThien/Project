@@ -25,11 +25,10 @@ class TableMe extends Component {
             totalRow: 0,
             page: 1,
             filter: {},
-            sortField: "id",
+            sortField: "ids",
             sortOrder: 1,
         }
         this.tableStruct = this.props.struct;
-
 
     }
     onClick(name, position) {
@@ -133,7 +132,7 @@ class TableMe extends Component {
                     item.ids = index;
                     return item;
                 })
-                this.setState({ data: data});
+                this.setState({ data: data });
             }))
         } else {
             this.onDefaultEdit();
@@ -222,9 +221,32 @@ class TableMe extends Component {
                 delete this.state.filter[item];
             }
         })
-        this.tableStruct.events.filter(this.state.filter, this.state.page).then(res => {
-            this.setState({ data: res.data.result, totalRow: res.data.size });
-        })
+        if (this.tableStruct.events && this.tableStruct.events.add) {
+            this.tableStruct.events.filter(this.state.filter, this.state.page).then(res => {
+                this.setState({ data: res.data.result, totalRow: res.data.size });
+            })
+        } else {
+            var data = this.state.data;
+            if (Object.keys(this.state.filter).length > 0) {
+                Object.keys(this.state.filter).map(keys => {
+                    data = data.filter(data => {
+                        return data[keys] == this.state.filter[keys].value;
+                    })
+                })
+
+                this.setState({ data: data });
+            }
+            else {
+                this.tableStruct.events.filter(this.state.filter, this.state.page).then(res => {
+                    var data = res.data.result.map((item, index) => {
+                        item.ids = index;
+                        return item;
+                    })
+                    this.setState({ data: data, totalRow: res.data.size });
+                })
+            }
+
+        }
 
     }
 
@@ -237,6 +259,16 @@ class TableMe extends Component {
                 res(this.setState({ sortField: colid, sortOrder: 1 }))
             }
         })
+    }
+    onDefaultSort(colid) {
+        var data = this.state.data;
+        data.sort((a, b) => {
+            var sortResult = a[colid] > b[colid] ? 1 : -1;
+            return sortResult * this.state.sortOrder
+        }
+        )
+
+        this.setState({ data: data });
     }
     geticon(colid) {
         if (this.state.sortField != colid) {
@@ -260,7 +292,7 @@ class TableMe extends Component {
             }
 
         })
-        add['ids'] = this.state.data.length; 
+        add['ids'] = this.state.data.length;
         var data = this.state.data;
         data.push(add);
         this.setState({ data: data });
@@ -304,9 +336,15 @@ class TableMe extends Component {
                                         <span  >{this.tableStruct.columns[colid].header}</span>
                                         <span className={this.geticon(colid)} onClick={e => this.onSort(colid).then(
                                             res => {
-                                                this.tableStruct.events.filter(this.state.filter, this.state.page, { sortField: this.state.sortField, sortOrder: this.state.sortOrder }).then(res => {
-                                                    this.setState({ data: res.data.result, totalRow: res.data.size });
-                                                })
+                                                if (this.tableStruct.events && this.tableStruct.events.add) {
+                                                    this.tableStruct.events.filter(this.state.filter, this.state.page, { sortField: this.state.sortField, sortOrder: this.state.sortOrder }).then(res => {
+                                                        this.setState({ data: res.data.result, totalRow: res.data.size });
+                                                    })
+                                                }
+                                                else {
+                                                    this.onDefaultSort(colid);
+                                                }
+
                                             }
                                         )} ></span>
                                     </th>
@@ -321,7 +359,12 @@ class TableMe extends Component {
                         <tr>
                             {Object.keys(this.tableStruct.columns).map(colid => {
                                 if (this.tableStruct.columns[colid].filter) {
-                                    return <th><input type='text' onBlur={e => this.onFilter(colid, e.target.value)} placeholder={this.tableStruct.columns[colid].placeholder} ></input></th>
+                                    return <th><input type='text' onBlur={e =>
+                                        this.onFilter(colid, e.target.value)}
+
+
+                                        placeholder={this.tableStruct.columns[colid].placeholder}
+                                    ></input></th>
 
                                 }
                                 else {
