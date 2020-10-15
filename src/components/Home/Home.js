@@ -263,7 +263,6 @@ class Home extends Component {
                             <TableMe ref={c => this.table = c} struct={this.tableStruct1} />
                         </Route>
                     </Switch>
-                123
                 </div>
             </Router>
 
