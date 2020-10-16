@@ -103,9 +103,17 @@
 }
 .Form {
     display: flex;
-    justify-content: space-around;
+    justify-content: flex-start;
     width: 500px;
     margin-bottom: 10px;
+}
+.Form > label {
+    width: 20px;
+    margin-right: 175px;
+    margin-left: 55px;
+}
+#icheck{
+    margin-left: 1px;
 }
 .FormCheck {
     // width: 500px;
@@ -114,14 +122,17 @@
     margin-top: -5px;
 }
 .checkbox {
-    margin-left: 112px;
+    text-align: left;
+    margin-bottom: 20px;
 }
 
 .FormButton {
+    box-sizing: border-box;
     display: flex;
     justify-content: center;
     align-items: center;
     width: 500px;
+    margin-left: 30px;
 }
 .p-dialog-content {
     overflow-y: visible;
@@ -154,3 +165,4 @@
     margin-bottom: 2rem;
     font-size: 25px;
 }
+
